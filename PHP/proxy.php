@@ -629,7 +629,21 @@ class Proxy {
 
         try {
 
-            if (!empty($_POST) && empty($_FILES)) { // Is it a POST without files?
+            $input = file_get_contents('php://input');
+
+            if (strlen ($input) > 0) {
+                // Example:
+                // $ curl -X POST --data '{"jsonrpc":"2.0","method":"clientVersion","params":[],"id":67}' http://www.example.com/resource-proxy/PHP/proxy.php?http://www.example2.com/myservice/
+
+                $this->proxyLog->log('POST with input detected');
+
+                $this->proxyUrl = $_SERVER['QUERY_STRING'];
+
+                $this->proxyData = $input;
+
+                $this->proxyMethod = "POST";
+
+            } else if (!empty($_POST) && empty($_FILES)) { // Is it a POST without files?
 
                 $this->proxyLog->log('POST detected');
 
